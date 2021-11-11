@@ -1,5 +1,5 @@
 # Bug Saves World
-![really far from complete, but a demo photo](https://user-images.githubusercontent.com/48612525/141354662-6e3c36dd-66b7-4530-afef-54459515042f.png)
+![really far from complete, but a demo photo](https://user-images.githubusercontent.com/48612525/141366735-a1122516-316e-4a17-b09c-b1bea896087f.png)
 
 _this is a really early demo photo of what one of the loading screens will sorta look like_
 
