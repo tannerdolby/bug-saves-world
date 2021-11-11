@@ -1,5 +1,6 @@
 # Bug Saves World
-![really far from complete, but a demo photo](https://user-images.githubusercontent.com/48612525/141258976-5b37794c-97fe-464c-b173-987e612afa7f.png)
+![really far from complete, but a demo photo](https://user-images.githubusercontent.com/48612525/141270291-f5a67a06-767f-4b27-8997-6766645d9e6c.png)
+
 _this is a really early demo photo of what one of the loading screens will sorta look like_
 
 You are the last bug left on planet Earth, the only way to make it out (to safety) alive is to collect all the secret tokens hidden in each level. Sounds easy enough right? :)

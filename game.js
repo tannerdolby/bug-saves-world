@@ -40,7 +40,7 @@ function preload ()
     
     // todo: make ladybug a spritesheet 
     // positions: (facing front,left,right,left running, right running)
-    this.load.image("ladybug", "assets/ladybug-transparent.png");
+    this.load.image("ladybug", "assets/ladybug.png");
 
     // todo: add special items/keys to be found e.g. stars/special item
 
@@ -67,7 +67,7 @@ function create ()
     this.add.image(100, 100, "star").setScale(.9);
     this.add.image(450, 50, "star").setScale(.9);
     this.add.image(650, 180, "star").setScale(.9);
-    this.add.image(400, 400, "ladybug").setScale(.2);
+    this.add.image(400, 400, "ladybug").setScale(.25);
 
     // todo: add physics, create staticGroup()
 
@@ -83,5 +83,3 @@ class BugCharacter {
         this.posY = 0;
     }
 }
-
-const buggy = new BugCharacter("buggy", "#f06");
