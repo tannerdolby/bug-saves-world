@@ -12,6 +12,7 @@ $blue-400: #2c6ae3;
 
 // yellows
 $green-yellow: #fafab5;
+$star: #FFF376;
 
 // reds
 $ladybug: #E74C3C;
@@ -25,6 +26,7 @@ $black: #000;
 $dark-100: #111;
 $dark-200: #222;
 $dark-300: #333;
+$salmon: #FF8276;
 
 body {
   line-height: 1.6;
@@ -197,6 +199,27 @@ body {
   background: $white;
 }
 
+.mouth::before,
+.mouth::after {
+  content: "";
+  position: absolute;
+  background: $salmon;
+  width: 3px;
+  height: 11px;
+  opacity: .7;
+  border-radius: 500px;
+}
+
+.mouth::before {
+  top: 80%;
+  left: -6px;
+}
+
+.mouth::after {
+  top: -50%;
+  left: -6px;
+}
+
 .ladybug-leg {
   position: absolute;
   top: 50%;
@@ -243,25 +266,37 @@ body {
   background: $green-yellow;
 }
 
-.platform-light-bg {
-  background: $black;
-  border-radius: 2px;
-  width: 200px;
-  height: 20px;
-}
-
-/* todo */
 .antenna {
-  position: absolute;
-  top: 10%;
+  position: relative;
+  top: -210px;
+  left: 250px;
   z-index: 9999;
-  left: -50%;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 90px;
   border: 2px solid #000;
   border-color: #000 transparent transparent transparent;
   border-radius: 50% / 10% 10% 0 0;
-  transform: rotate(200deg);
+  transform: rotate(290deg);
+}
+
+.antenna--end {
+  position: relative;
+  top: -299px;
+  left: 246px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $dark-100;
+}
+
+.antenna--two {
+  top: -310px;
+  left: 273px;
+}
+
+.antenna-end--two {
+  left: 270px;
+  top: -400px;
 }
 
 /* todo */
@@ -273,5 +308,50 @@ body {
   margin: 2rem;
   background: $blue-400;
   background: repeating-linear-gradient(to right, $midnight-blue-400 40%, $midnight-blue-300 50%);
-  border-radius: 50% 50% / 0% 0%;
+  border-radius: 50% 50% / 30% 10%;
+}
+
+.star {
+  margin: 1rem;
+  background: #000;
+  width: 30px;
+  height: 30px;
+  clip-path: polygon(50% 0%, 61% 35%, 97% 47%, 68% 57%, 59% 64%, 50% 98%, 39% 64%, 32% 57%, 4% 47%, 39% 35%);
+}
+
+.gold {
+  background: $star;
+}
+
+.platform-light-bg {
+  background: $black;
+  background: linear-gradient(to bottom, $caribbean-green 50%, #eee 50%);
+  border-radius: 2px;
+  width: 200px;
+  height: 20px;
+}
+
+.platform-grass {
+  position: relative;
+  margin-top: 1rem;
+  width: 300px;
+  height: 100px;
+  background: linear-gradient(to bottom, $caribbean-green 5% 15%, #906001 10% 15%, #9A6701 50%); // add one more dirt layer
+  display: flex;
+  align-items: center;
+  margin: 10rem;
+}
+
+.platform-grass-triangle {
+  position: relative;
+  top: -34%;
+  left: .5%;
+  width: 50px;
+  height: 16px;
+  z-index: 999;
+  background: $caribbean-green;
+  transform: rotate(60deg);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: linear-gradient(180deg, $caribbean-green 80%, green 99%);
+  // background: $caribbean-green;
 }
