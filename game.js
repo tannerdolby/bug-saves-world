@@ -38,7 +38,8 @@ function preload ()
     this.load.image("cloud", "assets/tacky-cloud.png");
     this.load.image("star", "assets/star.png");
     
-    // todo: make ladybug a spritesheet
+    // todo: make ladybug a spritesheet 
+    // positions: (facing front,left,right,left running, right running)
     this.load.image("ladybug", "assets/ladybug-transparent.png");
 
     // todo: add special items/keys to be found e.g. stars/special item
@@ -82,3 +83,5 @@ class BugCharacter {
         this.posY = 0;
     }
 }
+
+const buggy = new BugCharacter("buggy", "#f06");
