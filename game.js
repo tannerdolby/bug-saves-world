@@ -11,7 +11,7 @@ let config = {
         default: 'arcade',
         arcade: {
             gravity: {
-                y: 300,
+                y: 100,
                 debug: false
             }
         }
@@ -21,7 +21,8 @@ let config = {
     // it extends infinitely in all directions
     scene: {
         preload: preload,
-        create: create
+        create: create,
+        update: update
     }
     // The Camera system controls your view into
     // the Scene and you can move/zoom the active
@@ -46,10 +47,10 @@ function preload ()
     this.load.image("ground", "assets/platform.png");
     this.load.image("blackStar", "assets/black-stars.png");
     this.load.image("goldStar", "assets/gold-star.png");
-    this.load.image("grassPlatform", "assets/grass-platform.png");
+    this.load.image("grassPlatform", "assets/grass-platforms.png");
     
     // todo: make ladybug a spritesheet 
-    // positions: (facing front,left,right,left running, right running)
+    // positions: (facing front,left,right,left running,right running)
     this.load.image("ladybug", "assets/ladybug.png");
 
     // todo: add special items/keys to be found e.g. stars/special item
@@ -66,44 +67,98 @@ function preload ()
 // you create them (in a stack context)
 // the Scenes display list is where all
 // game objects live
-function create ()
+function create()
 {
     // Create game objects and add them to the
     // current Scenes display list
     // syntax: this.add.image(xCoord, yCoord, key)
     this.add.image(400, 300, "deepBlueSky");
     this.add.image(400, 300, "lightBackground");
-    this.add.image(150, 200, "cloud").setScale(.25);
-    this.add.image(300, 100, "cloud").setScale(.3);
-    this.add.image(580, 100, "cloud").setScale(.3);
-    // Ladybug character (home screen position related)
-    this.add.image(400, 427, "ladybug").setScale(.265);
-    this.add.text(280, 200, "Bug Saves The World", { color: "#000", fontSize: "1.5rem" });
-    this.add.image(430, 100, "blackStar").setScale(.3);
-    this.add.image(200, 50, "blackStar").setScale(.3);
-    this.add.image(200, 50, "goldStar").setScale(.5);
-    this.add.image(100, 115, "blackStar").setScale(.3);
-    this.add.image(100, 115, "goldStar").setScale(.5);
-    this.add.image(430, 100, "goldStar").setScale(.5);
 
-    // stacking a gold star onto a black star looks cool
-    // gives it a more retro/game look
+    // Loading Screen #1 - Light background with clouds and stars
+    // this.add.image(150, 200, "cloud").setScale(.25);
+    // this.add.image(300, 100, "cloud").setScale(.3);
+    // this.add.image(580, 100, "cloud").setScale(.3);
+    // this.add.text(280, 200, "Bug Saves The World", { color: "#000", fontSize: "1.5rem" });
+    // this.add.image(430, 100, "blackStar").setScale(.3);
+    // this.add.image(200, 50, "blackStar").setScale(.3);
+    // this.add.image(200, 50, "goldStar").setScale(.5);
+    // this.add.image(100, 115, "blackStar").setScale(.3);
+    // this.add.image(100, 115, "goldStar").setScale(.5);
+    // this.add.image(430, 100, "goldStar").setScale(.5);
+
+    // Ladybug character (home screen position related)
+    // this.add.image(400, 473, "ladybug").setScale(.265);
+    this.add.image(400, 491, "ladybug").setScale(.25);
 
     // Platform game objects
-    // Create a group of Static Bodies (e.g. they don't move and are unaffected by collisions)
+    // Create a "Static Physics Group" e.g. a group of Static Bodies 
     let platforms = this.physics.add.staticGroup();
-    platforms.create(10, 530, "grassPlatform").setScale(1, .7).refreshBody();
-    platforms.create(510, 530, "grassPlatform").setScale(1, .7).refreshBody();
 
-    // handle jumping motion from platform to platform
+    // ground
+    platforms.create(10, 605, "grassPlatform").setScale(1, .7).refreshBody();
+    platforms.create(510, 605, "grassPlatform").setScale(1, .7).refreshBody();
+    
+    // jumpable platforms
+    platforms.create(0, 380, "grassPlatform").setScale(.5, .25).refreshBody();
+    platforms.create(400, 200, "grassPlatform").setScale(.5, .2).refreshBody();
+    platforms.create(650, 200, "grassPlatform").setScale(.5, .2).refreshBody();
+
+    // Player Game Object
+    player = this.physics.add.sprite(170, 20, "dude");
+    player.body.setGravityY(300);
+    player.setBounce(0.2);
+    // player.setCollideWorldBounds(true);
+
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    this.anims.create({
+        key: 'turn',
+        frames: [ { key: 'dude', frame: 4 } ],
+        frameRate: 20
+    });
+
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    // magic :)
+    this.physics.add.collider(player, platforms);
 }
 
+function update() {
+    cursors = this.input.keyboard.createCursorKeys();
+    console.log(cursors);
 
-class BugCharacter {
-    constructor(username, color) {
-        this.username = username;
-        this.color = color;
-        this.posX = 0;
-        this.posY = 0;
+    if (cursors.left.isDown)
+    {
+        player.setVelocityX(-160);
+
+        player.anims.play('left', true);
+    }
+    else if (cursors.right.isDown)
+    {
+        player.setVelocityX(160);
+
+        player.anims.play('right', true);
+    }
+    else
+    {
+        player.setVelocityX(0);
+
+        player.anims.play('turn');
+    }
+
+    if (cursors.up.isDown && player.body.touching.down)
+    {
+        player.setVelocityY(-330);
     }
 }
