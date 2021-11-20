@@ -1,9 +1,9 @@
 # Bug Saves The World
 ![really far from complete, but a demo photo](https://user-images.githubusercontent.com/48612525/141366735-a1122516-316e-4a17-b09c-b1bea896087f.png)
 
-You are the last bug left on planet Bugzor, the only way to make it out alive is by collecting all the secret tokens hidden throughout each level while avoiding hostile monsters. Sounds easy enough right? :)
+You are the last bug left on planet Earth, the only way to make it out alive is by collecting all the secret tokens hidden throughout each level while avoiding hostile monsters. Sounds easy enough right? :)
 
-The map will feature terrains meant to test your skills as a bug, that is crawling, jumping and sometimes flying. There are enemy monsters (bug stompers) that will always attack you if your in their range. Watch out for any secret panels or switches on the map, those 
+The map will feature terrains meant to test your skills as a bug, that is crawling, jumping and sometimes flying. There are enemy monsters (bug stompers) that will always attack you if your in their range.
 
 ## Design
 All of the objects, characters, and styles in this game were created using HTML and CSS. Have a look at `game-design.html` and `design.scss` for how each of the things you see in game were created.
