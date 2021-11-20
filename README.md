@@ -11,7 +11,7 @@ All of the objects, characters, and styles in this game were created using HTML 
 ## Characters
 Playable:
 1. Ladybug - 6 limbs (very speedy, not the best at jumping)
-2. todo: Bee - 6 limbs (three pairs of segmented legs + wings) but the wings don't count give the bee any advantage at this moment.
+2. todo: Bee - 6 limbs (three pairs of segmented legs + wings)
 
 Enemies:
 1. Bug Stompers - 2 limbs (very slow , but will deal severe damage )
