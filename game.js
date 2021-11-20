@@ -4,8 +4,8 @@ let config = {
     // Set the dimensions for canvas element that
     // Phaser creates, this is the resolution
     // game displays in: 0x0 - 800x600
-    width: 800,
-    height: 600, 
+    width: 1080,
+    height: 640, 
     // use Arcade Physics system
     physics: {
         default: 'arcade',
@@ -39,7 +39,7 @@ var game = new Phaser.Game(config);
 // where assets are loaded
 function preload ()
 {
-    // load Image Assets
+    // load image assets
     this.load.image("deepBlueSky", "assets/sky-deep-blue.png");
     this.load.image("lightBackground", "assets/yellow-bg.png");
     this.load.image("cloud", "assets/tacky-cloud.png");
@@ -47,11 +47,12 @@ function preload ()
     this.load.image("ground", "assets/platform.png");
     this.load.image("blackStar", "assets/black-stars.png");
     this.load.image("goldStar", "assets/gold-star.png");
-    this.load.image("grassPlatform", "assets/grass-platforms.png");
+    // this.load.image("grassPlatform", "assets/grass-platforms.png");
+    this.load.image("grassPlatform", "assets/platform-grass-min.png");
     
     // todo: make ladybug a spritesheet 
     // positions: (facing front,left,right,left running,right running)
-    this.load.image("ladybug", "assets/ladybug.png");
+    this.load.image("ladybug", "assets/ladybug-min.png");
 
     // todo: add special items/keys to be found e.g. stars/special item
 
@@ -59,6 +60,11 @@ function preload ()
     this.load.spritesheet("dude", "assets/dude.png", {
         frameWidth: 32,
         frameHeight: 48
+    });
+
+    this.load.spritesheet("bug", "assets/ladybug-sprite-sheet-test1.png", {
+        frameWidth: 500,
+        frameHeight: 500
     });
 }
 
@@ -89,44 +95,45 @@ function create()
 
     // Ladybug character (home screen position related)
     // this.add.image(400, 473, "ladybug").setScale(.265);
-    this.add.image(400, 491, "ladybug").setScale(.25);
+    // this.add.image(400, 491, "ladybug").setScale(.25);
 
     // Platform game objects
     // Create a "Static Physics Group" e.g. a group of Static Bodies 
     let platforms = this.physics.add.staticGroup();
 
     // ground
-    platforms.create(10, 605, "grassPlatform").setScale(1, .7).refreshBody();
-    platforms.create(510, 605, "grassPlatform").setScale(1, .7).refreshBody();
+    platforms.create(0, 605, "grassPlatform").setScale(.4, .25).refreshBody();
+    platforms.create(550, 605, "grassPlatform").setScale(.4, .25).refreshBody();
     
     // jumpable platforms
-    platforms.create(0, 380, "grassPlatform").setScale(.5, .25).refreshBody();
+    platforms.create(0, 450, "grassPlatform").setScale(.1, .15).refreshBody();
     platforms.create(400, 200, "grassPlatform").setScale(.5, .2).refreshBody();
     platforms.create(650, 200, "grassPlatform").setScale(.5, .2).refreshBody();
 
     // Player Game Object
-    player = this.physics.add.sprite(170, 20, "dude");
+    player = this.physics.add.sprite(350, 410, "bug");
     player.body.setGravityY(300);
     player.setBounce(0.2);
-    // player.setCollideWorldBounds(true);
+    player.setScale(.2);
+    player.setCollideWorldBounds(true);
 
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-        frameRate: 10,
+        frames: this.anims.generateFrameNumbers('bug', { start: 0, end: 1 }),
+        frameRate: 5,
         repeat: -1
     });
 
     this.anims.create({
         key: 'turn',
-        frames: [ { key: 'dude', frame: 4 } ],
-        frameRate: 20
+        frames: [ { key: 'bug', frame: 0 } ],
+        frameRate: 40
     });
 
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-        frameRate: 10,
+        frames: this.anims.generateFrameNumbers('bug', { start: 3, end: 4 }),
+        frameRate: 5,
         repeat: -1
     });
 
@@ -135,30 +142,24 @@ function create()
 }
 
 function update() {
-    cursors = this.input.keyboard.createCursorKeys();
-    console.log(cursors);
+    // Creates and returns an object containing 4 hotkeys for Up, Down, Left and Right, and also Space Bar and shift.
+    // An object containing the properties: up, down, left, right, space and shift.
+    let cursors = this.input.keyboard.createCursorKeys();
+    const { up, right, bottom, left, space, shift } = cursors;
+    const isPlayerTouching = player.body.touching.down;
 
-    if (cursors.left.isDown)
-    {
+    // Hotkey movements
+    if (left.isDown) {
         player.setVelocityX(-160);
-
         player.anims.play('left', true);
-    }
-    else if (cursors.right.isDown)
-    {
+    } else if (right.isDown) {
         player.setVelocityX(160);
-
         player.anims.play('right', true);
-    }
-    else
-    {
+    } else if ((space.isDown | up.isDown) && isPlayerTouching) {
+        player.setVelocityY(-350);
+    } else {
         player.setVelocityX(0);
-
         player.anims.play('turn');
     }
 
-    if (cursors.up.isDown && player.body.touching.down)
-    {
-        player.setVelocityY(-330);
-    }
 }
