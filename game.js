@@ -40,6 +40,10 @@ var canMove = true;
 var gameOver;
 var flames;
 var currentLevel;
+var allStarsCollected;
+var winText;
+var timeElapsed;
+var t;
 
 // Create an instance of a Phaser.Game object 
 // with the configuration above passed to it
@@ -69,6 +73,7 @@ function preload ()
     // Fire Pixel asset created by Joker I: https://www.pinterest.com/pin/704039354236421814/
     this.load.image("flame", "assets/fire-pixel-art.png");
     this.load.image("star", "assets/star.png");
+    this.load.image("darkScreen", "assets/dark-screen.png");
     // load ladybug spritesheet (frames created in vectornator)
     this.load.spritesheet("bug", "assets/spritesheet-three.png", {
         frameWidth: 52,
@@ -119,24 +124,28 @@ function create()
     // bottom center left platform
     platforms.create(50, 350, "grassPlatform").setScale(.125, .1).refreshBody();
     platforms.create(400, 450, "grassPlatform").setScale(.125, .1).refreshBody();
-
-    // bottom left small platform
-    platforms.create(750, 400, "grassPlatform").setScale(.1, .06).refreshBody();
+    platforms.create(950, 450, "grassPlatform").setScale(.1, .06).refreshBody();
 
     // square
-    platforms.create(580, 510, "grassCube").setScale(.1, .09).refreshBody();
-    platforms.create(200, 410, "grassCube").setScale(.1, .09).refreshBody();
-    platforms.create(200, 280, "grassCube").setScale(.1, .09).refreshBody();
+    platforms.create(900, 220, "grassCube").setScale(.1, .09).refreshBody();
+    platforms.create(600, 510, "grassCube").setScale(.1, .09).refreshBody();
+    platforms.create(240, 390, "grassCube").setScale(.1, .09).refreshBody();
+    platforms.create(275, 280, "grassCube").setScale(.1, .09).refreshBody();
+    platforms.create(650, 380, "grassCube").setScale(.1, .09).refreshBody();
+    platforms.create(770, 340, "grassCube").setScale(.1, .09).refreshBody();
+    
 
     // top center right
-    platforms.create(500, 250, "grassPlatform").setScale(.2, .1).refreshBody();
+    platforms.create(550, 250, "grassPlatform").setScale(.2, .1).refreshBody();
     platforms.create(900, 250, "grassPlatform").setScale(.2, .1).refreshBody();
-    platforms.create(1100, 150, "grassPlatform").setScale(.2, .1).refreshBody();
+    platforms.create(1100, 135, "grassPlatform").setScale(.2, .1).refreshBody();
+    platforms.create(0, 200, "grassPlatform").setScale(.2, .1).refreshBody();
 
     // static group for a deadly flames
     var flamePlatform = this.physics.add.staticGroup();
-    flamePlatform.create(200, 562, "flame").setScale(.07).refreshBody();
-    flamePlatform.create(700, 562, "flame").setScale(.07).refreshBody();
+    flamePlatform.create(200, 563, "flame").setScale(.07).refreshBody();
+    flamePlatform.create(780, 563, "flame").setScale(.07).refreshBody();
+    flamePlatform.create(585, 216, "flame").setScale(.07).refreshBody();
 
     // game related text
     const cssGameText = {
@@ -148,21 +157,18 @@ function create()
 
     // Current level text
     currentLevel = this.add.text(2, 2, `Level ${currentLevel}: Bugzor Marsh`, cssGameText);
-    starCount = this.add.text(1015, 2, `Stars: 0`, cssGameText);
-    
-    // todo: GameOver Screen
-
-    // Timer
-    let gameTimer = "1:30:10 MM::SS::MS";
-    // timedEvent = this.time.delayedCall(5000, hi, [], this);
-    // timerText = this.add.text(450, 100, `Timer: ${gameTimer}`, cssGameText);
+    starCount = this.add.text(1013, 2, `Stars: 0`, cssGameText);
+    winText = this.add.text(300, 50, "", { color: "#000", fontSize: "20px"});
+    burnedText = this.add.text(400, 100, "", { color: "red" });
+    timeElapsed = this.add.text(0, 25, this.time.now * 0.01, cssGameText);
 
     // Player Game Object
     player = this.physics.add.sprite(0, 400, "bug");
     player.data = {
         lives: 3,
         stars: 0,
-        isBurned: false
+        isBurned: false,
+        hasWon: false
     };
     player.body.setGravityY(400);
     player.setBounce(0.15);
@@ -195,25 +201,23 @@ function create()
         key: 'star',
         repeat: 11,
         setXY: { x: 0, y: 0, stepX: 200 }
-    });    
+    });
 
     stars.children.iterate(function (child) {
-        // child.setVelocity(Phaser.Math.Between(200, 400), 20);
         child.setX(Phaser.Math.Between(0, 950));
-        child.setY(Phaser.Math.Between(100, 500));
+        child.setY(Phaser.Math.Between(0, 550));
         child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
     });
 
     // Handle Collisions
     this.physics.add.collider(player, platforms);
     this.physics.add.collider(stars, platforms);
-    // this.physics.add.collider(player, flamePlatform);
+    this.physics.add.collider(stars, flamePlatform);
     // this.physics.add.collider(player, stars); this is fun for hockey / pushing object game
 
     // overlaps
     this.physics.add.overlap(player, stars, collectStar, null, this);
     this.physics.add.overlap(player, flamePlatform, touchFire, null, this);
-
 }
 
 function update() {
@@ -240,24 +244,34 @@ function update() {
         player.anims.play('turn');
     }
 
+    t = (this.time.now * 0.001).toFixed(2);
+    timeElapsed.setText(`Time Elapsed: ${t}s`);
+
     if (player.data.isBurned) {
+        timeElapsed.setText("");
         setTimeout(() => {
             player.disableBody(true, true);
             gameOver = true;
         }, 1500);
     }
-}
 
-function hi() {
-    // this.add.text(400, 400, "HELLLO", {color: "#000"});
+    if (player.data.stars === 12) {
+        allStarsCollected = true;
+        player.data.hasWon = true;
+        timeElapsed.setText("");
+
+    }
 }
 
 function collectStar(player, star) {
     // Remove the star from scene
     star.disableBody(true, true);
-    // increment player star count
     player.data.stars += 1;
     starCount.setText(`Stars: ${player.data.stars}`);
+    if (player.data.stars === 12) {
+        timeElapsed.setText(t);
+        winText.setText(`You Win! Level 1 completed in ${t}s`);
+    }
 }
 
 function isPlayerAlive(player) {
@@ -268,5 +282,11 @@ function touchFire(player) {
     player.data.isBurned = true;
     // set red tint
     player.setTint(0xff0000);
+    player.setVelocityY(-50);
+    player.setVelocityX(Phaser.Math.Between(-50, 50));
     gameOver = true;
+    burnedText.setText("Bug has taken burn damage!");
+    setTimeout(() => {
+        burnedText.setText("Game Over! Thank you for playing :)");
+    }, 2000);
 }
