@@ -1,9 +1,10 @@
 # Bug Saves The World
 ![really far from complete, but a demo photo](https://user-images.githubusercontent.com/48612525/141366735-a1122516-316e-4a17-b09c-b1bea896087f.png)
+![level one](https://user-images.githubusercontent.com/48612525/144314682-dd1ffb57-9f48-4a6a-84d9-1ac269c7d0c2.png)
 
 You are the last bug left on planet Earth, the only way to make it out alive is by collecting all the secret tokens hidden throughout each level while avoiding hostile monsters. Sounds easy enough right? :)
 
-The map will feature terrains meant to test your skills as a bug, that is crawling, jumping and sometimes flying. There are enemy monsters (bug stompers) that will always attack you if your in their range.
+The map will feature terrains meant to test your skills as a bug. There are patches of fire around the map that will turn the bug a tint of red and result in a game over. Todo: enemy monsters (bug stompers) that will always attack you if your in their range.
 
 ## Design
 All of the objects, characters, and styles in this game were created using HTML and CSS. Have a look at `game-design.html` and `design.scss` for how each of the things you see in game were created.
@@ -13,15 +14,15 @@ Playable:
 1. Ladybug - 6 limbs (very speedy, not the best at jumping)
 2. todo: Bee - 6 limbs (three pairs of segmented legs + wings)
 
-Enemies:
+Enemy:
 1. Bug Stompers - 2 limbs (very slow , but will deal severe damage )
-2. todo: some crawly thing - like a spider
+2. Flame - a small block of flames. If you touch or fall into the flames, it will burn the bug leading to game over.
 
 ## Easter Eggs
 I have added one to the first level, will fill in this section when game is closer to completion.
 
 ## Notes
-For designing the characters, and game objects. I like to prototype in CodePen when creating assets for the game. I would like to use a tool more suitable for generating sprites like GIMP or something but for now, creating the game assets with HTML/CSS and taking a screenshot, then placing them on a transparent layer and loading as game objects as worked nicely. 
+For designing the characters, and game objects I used HTML/CSS for static assets and Vectornator for the sprites.
 
 [CodePen Notes](https://codepen.io/tannerdolby/pen/vYJaZOQ)
 
