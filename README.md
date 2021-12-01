@@ -18,9 +18,6 @@ Enemy:
 1. Bug Stompers - 2 limbs (very slow , but will deal severe damage )
 2. Flame - a small block of flames. If you touch or fall into the flames, it will burn the bug leading to game over.
 
-## Easter Eggs
-I have added one to the first level, will fill in this section when game is closer to completion.
-
 ## Notes
 For designing the characters, and game objects I used HTML/CSS for static assets and Vectornator for the sprites.
 
