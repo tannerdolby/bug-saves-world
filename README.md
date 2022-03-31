@@ -10,7 +10,6 @@ The map will feature terrains meant to test your skills as a bug. There are patc
 
 1. Clone this repository
 2. Start the local server with `npm run dev`
-3. View http://localhost:8080
 
 ## Design
 All of the background objects and styles for each level in this game were created using HTML and CSS. The sprites were created with Vectornator. Have a look at `game-design.html` and `design.scss` for how each of the things you see in game were created.
