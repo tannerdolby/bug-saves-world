@@ -12,7 +12,7 @@ The map will feature terrains meant to test your skills as a bug. There are patc
 2. Start the local server with `npm run dev`
 
 ## Design
-All of the background objects and styles for each level in this game were created using HTML and CSS. The sprites were created with Vectornator. Have a look at `game-design.html` and `design.scss` for how each of the things you see in game were created.
+All of the background objects and styles for each level in this game were created using HTML and CSS. The sprites were created with Vectornator. Have a look at the `/assets/` directory, `game-design.html` and `design.scss` for more details.
 
 ## Characters
 The character objects I created in Vectornator and packed into a sprite sheet to be loaded as a game object.
