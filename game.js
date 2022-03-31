@@ -79,6 +79,11 @@ function preload ()
         frameWidth: 52,
         frameHeight: 31
     });
+    // Bug Smasher hostile monsters
+    this.load.spritesheet("monster", "assets/bug-smasher-spritesheet.png", {
+        frameWidth: 100,
+        frameHeight: 100
+    });
 }
 
 // Creating Game Objects
@@ -89,6 +94,7 @@ function preload ()
 function create()
 {
     const LADYBUG_SPRITE_FRAMERATE = 5;
+    const MONSTER_SPRITE_FRAMERATE = 5;
     // Create game objects and add them to the
     // current Scenes display list
     // syntax: this.add.image(xCoord, yCoord, key)
@@ -162,7 +168,38 @@ function create()
     burnedText = this.add.text(400, 100, "", { color: "red" });
     timeElapsed = this.add.text(0, 25, this.time.now * 0.01, cssGameText);
 
-    // Player Game Object
+    // Bug Smasher Game Object
+    monster = this.physics.add.sprite(0, 200, "monster");
+    monster.data = {
+        isActive: true
+    }
+
+    monster.body.setGravityY(400);
+    monster.setBounce(0.15);
+    monster.setScale(1);
+    monster.setCollideWorldBounds(true);
+
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('monster', { start: 1, end: 2 }),
+        frameRate: MONSTER_SPRITE_FRAMERATE,
+        repeat: -1
+    });
+
+    this.anims.create({
+        key: 'turn',
+        frames: [ { key: 'monster', frame: 0 } ],
+        frameRate: MONSTER_SPRITE_FRAMERATE * 4
+    });
+
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('monster', { start: 3, end: 4 }),
+        frameRate: MONSTER_SPRITE_FRAMERATE,
+        repeat: -1
+    });
+
+    // Player "Bug" Game Object
     player = this.physics.add.sprite(0, 400, "bug");
     player.data = {
         lives: 3,
@@ -203,6 +240,7 @@ function create()
         setXY: { x: 0, y: 0, stepX: 200 }
     });
 
+    // Randomly displace stars across the map
     stars.children.iterate(function (child) {
         child.setX(Phaser.Math.Between(0, 950));
         child.setY(Phaser.Math.Between(0, 550));
@@ -211,13 +249,20 @@ function create()
 
     // Handle Collisions
     this.physics.add.collider(player, platforms);
+    this.physics.add.collider(monster, platforms);
     this.physics.add.collider(stars, platforms);
     this.physics.add.collider(stars, flamePlatform);
+
     // this.physics.add.collider(player, stars); this is fun for hockey / pushing object game
 
     // overlaps
+
+    // bug collects a star
     this.physics.add.overlap(player, stars, collectStar, null, this);
+    // bug walks into flames
     this.physics.add.overlap(player, flamePlatform, touchFire, null, this);
+    // bug smash
+    this.physics.add.overlap(player, monster, smashBug, null, this);
 }
 
 function update() {
@@ -229,26 +274,34 @@ function update() {
     cursors = this.input.keyboard.createCursorKeys();
     const { up, right, bottom, left, space, shift } = cursors;
     const isPlayerTouching = player.body.touching.down;
+    const isMonsterTouching = monster.body.touching.down;
 
     // Hotkey movements
     if (left.isDown) {
         player.setVelocityX(-160);
         player.anims.play('left', true);
+        monster.setVelocityX(-160);
+        monster.anims.play('left', true);
     } else if (right.isDown) {
         player.setVelocityX(160);
         player.anims.play('right', true);
+        monster.setVelocityX(160);
+        monster.anims.play('right', true);
     } else if ((space.isDown || up.isDown) && isPlayerTouching) {
         player.setVelocityY(-350);
+        monster.setVelocityY(-350);
     } else {
         player.setVelocityX(0);
         player.anims.play('turn');
+        monster.setVelocityX(0);
+        monster.anims.play('turn');
     }
 
-    t = (this.time.now * 0.001).toFixed(2);
-    timeElapsed.setText(`Time Elapsed: ${t}s`);
+    time = (this.time.now * 0.001).toFixed(1);
+    timeElapsed.setText(`Time Elapsed: ${time}s`);
 
     if (player.data.isBurned) {
-        timeElapsed.setText("");
+        timeElapsed.setText(`^___^ ty for playing!`);
         setTimeout(() => {
             player.disableBody(true, true);
             gameOver = true;
@@ -289,4 +342,11 @@ function touchFire(player) {
     setTimeout(() => {
         burnedText.setText("Game Over! Thank you for playing :)");
     }, 2000);
+}
+
+function smashBug(player) {
+    player.data.lives -= 1;
+    if (player.data.lives <= 0) {
+        gameOver = true;
+    }
 }
