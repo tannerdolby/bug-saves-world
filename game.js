@@ -31,29 +31,29 @@ let config = {
     // cameras for multiple views into the Scene
 }
 
-var player;
-var stars;
-var platforms;
-var cursors;
-var starCount;
-var canMove = true;
-var gameOver;
-var flames;
-var currentLevel;
-var allStarsCollected;
-var winText;
-var timeElapsed;
-var t;
+let player;
+let stars;
+let platforms;
+let cursors;
+let starCount;
+let canMove = true;
+let gameOver;
+let flames;
+let currentLevel;
+let allStarsCollected;
+let winText;
+let timeElapsed;
+let t;
 
 // Create an instance of a Phaser.Game object 
 // with the configuration above passed to it
-var game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
 
 // Timer
-var timedEvent, timerText;
+let timedEvent, timerText;
 
 // flame platform collision with player
-var playerTouchedFlame = false;
+let playerTouchedFlame = false;
 
 // Load Assets 
 // define a Scene function called "preload"
@@ -148,7 +148,7 @@ function create()
     platforms.create(0, 200, "grassPlatform").setScale(.2, .1).refreshBody();
 
     // static group for a deadly flames
-    var flamePlatform = this.physics.add.staticGroup();
+    let flamePlatform = this.physics.add.staticGroup();
     flamePlatform.create(200, 563, "flame").setScale(.07).refreshBody();
     flamePlatform.create(780, 563, "flame").setScale(.07).refreshBody();
     flamePlatform.create(585, 216, "flame").setScale(.07).refreshBody();
@@ -179,25 +179,26 @@ function create()
     monster.setScale(1);
     monster.setCollideWorldBounds(true);
 
-    this.anims.create({
-        key: 'left',
-        frames: this.anims.generateFrameNumbers('monster', { start: 1, end: 2 }),
-        frameRate: MONSTER_SPRITE_FRAMERATE,
-        repeat: -1
-    });
+    // todo: hash out a path for monsters to follow
+    // this.anims.create({
+    //     key: 'left',
+    //     frames: this.anims.generateFrameNumbers('monster', { start: 1, end: 2 }),
+    //     frameRate: MONSTER_SPRITE_FRAMERATE,
+    //     repeat: -1
+    // });
 
-    this.anims.create({
-        key: 'turn',
-        frames: [ { key: 'monster', frame: 0 } ],
-        frameRate: MONSTER_SPRITE_FRAMERATE * 4
-    });
+    // this.anims.create({
+    //     key: 'turn',
+    //     frames: [ { key: 'monster', frame: 0 } ],
+    //     frameRate: MONSTER_SPRITE_FRAMERATE * 4
+    // });
 
-    this.anims.create({
-        key: 'right',
-        frames: this.anims.generateFrameNumbers('monster', { start: 3, end: 4 }),
-        frameRate: MONSTER_SPRITE_FRAMERATE,
-        repeat: -1
-    });
+    // this.anims.create({
+    //     key: 'right',
+    //     frames: this.anims.generateFrameNumbers('monster', { start: 3, end: 4 }),
+    //     frameRate: MONSTER_SPRITE_FRAMERATE,
+    //     repeat: -1
+    // });
 
     // Player "Bug" Game Object
     player = this.physics.add.sprite(0, 400, "bug");
@@ -280,21 +281,21 @@ function update() {
     if (left.isDown) {
         player.setVelocityX(-160);
         player.anims.play('left', true);
-        monster.setVelocityX(-160);
-        monster.anims.play('left', true);
+        // monster.setVelocityX(-160);
+        // monster.anims.play('left', true);
     } else if (right.isDown) {
         player.setVelocityX(160);
         player.anims.play('right', true);
-        monster.setVelocityX(160);
-        monster.anims.play('right', true);
+        // monster.setVelocityX(160);
+        // monster.anims.play('right', true);
     } else if ((space.isDown || up.isDown) && isPlayerTouching) {
         player.setVelocityY(-350);
-        monster.setVelocityY(-350);
+        // monster.setVelocityY(-350);
     } else {
         player.setVelocityX(0);
         player.anims.play('turn');
-        monster.setVelocityX(0);
-        monster.anims.play('turn');
+        // monster.setVelocityX(0);
+        // monster.anims.play('turn');
     }
 
     time = (this.time.now * 0.001).toFixed(1);
