@@ -1,15 +1,11 @@
 let config = {
-    // tries to use WebGL renderer if supported and falls back to canvas
     type: Phaser.AUTO,
-    // Set the dimensions for canvas element that
-    // Phaser creates, this is the resolution
-    // game displays in: 0x0 - 800x600
     width: 1080,
     height: 640,
+    pixelArt: false,
     loader: {
         baseUrl: "https://labs.phaser.io"
     },
-    // use Arcade Physics system
     physics: {
         default: 'arcade',
         arcade: {
@@ -17,18 +13,22 @@ let config = {
             gravity: { y: 250 }
         }
     },
-    // Default scene
-    // the scene itself doesn't have a fixed size,
-    // it extends infinitely in all directions
     scene: {
         preload: preload,
         create: create,
         update: update
+    },
+    audio: {
+        disableWebAudio: true
     }
     // The Camera system controls your view into
     // the Scene and you can move/zoom the active
     // camera as required, we can also create new
     // cameras for multiple views into the Scene
+}
+
+window.onload = () => {
+    console.log("start");
 }
 
 let player;
@@ -44,6 +44,7 @@ let allStarsCollected;
 let winText;
 let timeElapsed;
 let t;
+let music;
 
 // Create an instance of a Phaser.Game object 
 // with the configuration above passed to it
@@ -58,7 +59,7 @@ let playerTouchedFlame = false;
 // Load Assets 
 // define a Scene function called "preload"
 // where assets are loaded
-function preload ()
+function preload()
 {
     // load image assets
     this.load.image("deepBlueSky", "assets/sky-deep-blue.png");
@@ -80,10 +81,15 @@ function preload ()
         frameHeight: 31
     });
     // Bug Smasher hostile monsters
-    this.load.spritesheet("monster", "assets/bug-smasher-spritesheet.png", {
-        frameWidth: 100,
+    this.load.spritesheet("monster", "assets/monster-spritesheet.png", {
+        frameWidth: 102,
         frameHeight: 100
     });
+
+    // todo: get ogg files for audio to work for Firefox
+    this.load.audio("write-sins-not-tragedies-8-bit", [
+        "assets/I-Write-Sins-Not-Tragedies-8-bit.mp3"
+    ]);
 }
 
 // Creating Game Objects
@@ -93,6 +99,15 @@ function preload ()
 // game objects live
 function create()
 {
+    // audio
+    music = this.sound.add("write-sins-not-tragedies-8-bit");
+    console.log(music);
+    console.log(music.play());
+
+    // if (f.state == "suspended") {
+    //     f.resume();
+    // }
+
     const LADYBUG_SPRITE_FRAMERATE = 5;
     const MONSTER_SPRITE_FRAMERATE = 5;
     // Create game objects and add them to the
@@ -140,7 +155,6 @@ function create()
     platforms.create(650, 380, "grassCube").setScale(.1, .09).refreshBody();
     platforms.create(770, 340, "grassCube").setScale(.1, .09).refreshBody();
     
-
     // top center right
     platforms.create(550, 250, "grassPlatform").setScale(.2, .1).refreshBody();
     platforms.create(900, 250, "grassPlatform").setScale(.2, .1).refreshBody();
@@ -149,13 +163,13 @@ function create()
 
     // static group for a deadly flames
     let flamePlatform = this.physics.add.staticGroup();
-    flamePlatform.create(200, 563, "flame").setScale(.07).refreshBody();
-    flamePlatform.create(780, 563, "flame").setScale(.07).refreshBody();
-    flamePlatform.create(585, 216, "flame").setScale(.07).refreshBody();
+    flamePlatform.create(200, 563, "flame").setScale(.065).refreshBody();
+    flamePlatform.create(780, 563, "flame").setScale(.065).refreshBody();
+    flamePlatform.create(585, 216, "flame").setScale(.065).refreshBody();
 
     // game related text
     const cssGameText = {
-        color: "#000",
+        color: "#111",
         fontFamily: "-apple-system, Arial, sans-serif"
     };
 
@@ -176,12 +190,12 @@ function create()
 
     monster.body.setGravityY(400);
     monster.setBounce(0.15);
-    monster.setScale(1);
+    monster.setScale(.95);
     monster.setCollideWorldBounds(true);
 
     // todo: hash out a path for monsters to follow
     // this.anims.create({
-    //     key: 'left',
+    //     key: 'right',
     //     frames: this.anims.generateFrameNumbers('monster', { start: 1, end: 2 }),
     //     frameRate: MONSTER_SPRITE_FRAMERATE,
     //     repeat: -1
@@ -194,7 +208,7 @@ function create()
     // });
 
     // this.anims.create({
-    //     key: 'right',
+    //     key: 'left',
     //     frames: this.anims.generateFrameNumbers('monster', { start: 3, end: 4 }),
     //     frameRate: MONSTER_SPRITE_FRAMERATE,
     //     repeat: -1
@@ -202,15 +216,17 @@ function create()
 
     // Player "Bug" Game Object
     player = this.physics.add.sprite(0, 400, "bug");
+
     player.data = {
         lives: 3,
         stars: 0,
         isBurned: false,
         hasWon: false
     };
+
     player.body.setGravityY(400);
     player.setBounce(0.15);
-    player.setScale(1.2);
+    player.setScale(1.1);
     player.setCollideWorldBounds(true);
 
     this.anims.create({
@@ -223,7 +239,7 @@ function create()
     this.anims.create({
         key: 'turn',
         frames: [ { key: 'bug', frame: 0 } ],
-        frameRate: LADYBUG_SPRITE_FRAMERATE * 4
+        frameRate: LADYBUG_SPRITE_FRAMERATE * 1
     });
 
     this.anims.create({
@@ -242,6 +258,7 @@ function create()
     });
 
     // Randomly displace stars across the map
+    // todo: preset position and number of stars for each level
     stars.children.iterate(function (child) {
         child.setX(Phaser.Math.Between(0, 950));
         child.setY(Phaser.Math.Between(0, 550));
@@ -253,56 +270,54 @@ function create()
     this.physics.add.collider(monster, platforms);
     this.physics.add.collider(stars, platforms);
     this.physics.add.collider(stars, flamePlatform);
+    this.physics.add.collider(player, monster);
 
     // this.physics.add.collider(player, stars); this is fun for hockey / pushing object game
-
-    // overlaps
 
     // bug collects a star
     this.physics.add.overlap(player, stars, collectStar, null, this);
     // bug walks into flames
     this.physics.add.overlap(player, flamePlatform, touchFire, null, this);
-    // bug smash
+    // todo: bug smash
     this.physics.add.overlap(player, monster, smashBug, null, this);
 }
 
 function update() {
-    // Timer
-    // timerText.setText(`Timer: ${timedEvent.getProgress().toString().slice(0, 4)}, ${player.data.stars} STARS`);
 
     // Creates and returns an object containing 4 hotkeys for Up, Down, Left and Right, and also Space Bar and shift.
     // An object containing the properties: up, down, left, right, space and shift.
     cursors = this.input.keyboard.createCursorKeys();
+
     const { up, right, bottom, left, space, shift } = cursors;
+    const movementKeys = this.input.keyboard.addKeys({
+        up: 'W',
+        left: 'A',
+        down: 'S',
+        right: 'D'
+    });
+
     const isPlayerTouching = player.body.touching.down;
     const isMonsterTouching = monster.body.touching.down;
 
     // Hotkey movements
-    if (left.isDown) {
+    if (left.isDown || movementKeys.left.isDown) {
         player.setVelocityX(-160);
         player.anims.play('left', true);
-        // monster.setVelocityX(-160);
-        // monster.anims.play('left', true);
-    } else if (right.isDown) {
+    } else if (right.isDown || movementKeys.right.isDown) {
         player.setVelocityX(160);
         player.anims.play('right', true);
-        // monster.setVelocityX(160);
-        // monster.anims.play('right', true);
-    } else if ((space.isDown || up.isDown) && isPlayerTouching) {
+    } else if ((space.isDown || up.isDown || movementKeys.up.isDown) && isPlayerTouching) {
         player.setVelocityY(-350);
-        // monster.setVelocityY(-350);
     } else {
         player.setVelocityX(0);
         player.anims.play('turn');
-        // monster.setVelocityX(0);
-        // monster.anims.play('turn');
     }
 
     time = (this.time.now * 0.001).toFixed(1);
     timeElapsed.setText(`Time Elapsed: ${time}s`);
 
     if (player.data.isBurned) {
-        timeElapsed.setText(`^___^ ty for playing!`);
+        timeElapsed.setText(`^__^ ty for playing!`);
         setTimeout(() => {
             player.disableBody(true, true);
             gameOver = true;
@@ -334,17 +349,20 @@ function isPlayerAlive(player) {
 
 function touchFire(player) {
     player.data.isBurned = true;
-    // set red tint
     player.setTint(0xff0000);
     player.setVelocityY(-50);
     player.setVelocityX(Phaser.Math.Between(-50, 50));
+    this.physics.pause();
     gameOver = true;
     burnedText.setText("Bug has taken burn damage!");
-    setTimeout(() => {
-        burnedText.setText("Game Over! Thank you for playing :)");
-    }, 2000);
+    if (gameOver) {
+        setTimeout(() => {
+            burnedText.setText("Game Over! Thank you for playing :)");
+        }, 2000);
+    }
 }
 
+// todo: monster game loop and smash
 function smashBug(player) {
     player.data.lives -= 1;
     if (player.data.lives <= 0) {
