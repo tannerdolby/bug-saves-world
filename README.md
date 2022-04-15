@@ -16,19 +16,13 @@ npm run dev
 All of the background objects and styles for each level in this game were created using HTML and CSS. The sprites were created with Vectornator. Have a look at the `/assets/` directory, `game-design.html` and `design.scss` for more details.
 
 ## Characters
-The character objects I created in Vectornator and packed into a sprite sheet to be loaded as a game object.
+The character objects I created in Vectornator and packed into a sprite sheet to be loaded as game objects.
 
-Playable:
-- Ladybug
-
-Enemy/hostile:
-- Bug Monster
-- Flame
+- Playable: Ladybug
+- Enemy/hostile: Bug Monster, Flames
 
 ## Notes
-For designing the characters, and game objects I used HTML/CSS for static assets and Vectornator for the sprites.
-
-[Design Notes on CodePen](https://codepen.io/tannerdolby/pen/vYJaZOQ)
+For designing the characters, and game objects I used HTML/CSS for static assets and Vectornator for the sprites. [Design Notes on CodePen](https://codepen.io/tannerdolby/pen/vYJaZOQ)
 
 ## Inspiration
 I built this game for the 2021 [GitHub Game Off](https://github.blog/2021-10-15-save-the-date-for-github-game-off-2021/) which specified a "Bug" theme. It was a really fun way to learn more about Phaser and to realize how much I enjoy game dev.
@@ -36,5 +30,5 @@ I built this game for the 2021 [GitHub Game Off](https://github.blog/2021-10-15-
 ## Kudos
 - [Phaser Docs](https://phaser.io)
 - [Sprite Sheet Packer](https://www.codeandweb.com/free-sprite-sheet-packer)
-- [Removing Image backgrounds](https://spark.adobe.com/tools/remove-background/#) from Adobe Spark.
-- [Sprite Sheet Tool](https://codeshack.io/images-sprite-sheet-generator/) from CodeShack.
+- [Removing Image backgrounds](https://spark.adobe.com/tools/remove-background/#)
+- [Sprite Sheet Tool](https://codeshack.io/images-sprite-sheet-generator/)
