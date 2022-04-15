@@ -21,7 +21,6 @@ The character objects I created in Vectornator and packed into a sprite sheet to
 - Playable: Ladybug
 - Enemy/hostile: Bug Monster, Flames
 
-## Notes
 For designing the characters, and game objects I used HTML/CSS for static assets and Vectornator for the sprites. [Design Notes on CodePen](https://codepen.io/tannerdolby/pen/vYJaZOQ)
 
 ## Inspiration
