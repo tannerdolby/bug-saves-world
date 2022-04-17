@@ -1,5 +1,4 @@
-// LEVEL 1
-
+// Game Levels Scene
 class SceneTwo extends Phaser.Scene {
 
     constructor() {
@@ -38,10 +37,11 @@ class SceneTwo extends Phaser.Scene {
             frameHeight: 100
         });
 
-        // todo: get ogg files for audio to work in Firefox
-        this.load.audio("write-sins-not-tragedies-8-bit", [
-            "assets/I-Write-Sins-Not-Tragedies-8-bit.mp3"
-        ]);
+        // TODO: get .ogg files for `song.src` to have audio in Firefox
+        songs.forEach(song => {
+            this.load.audio(song.id, song.src);
+        });
+
     }
 
     create() {
@@ -49,8 +49,10 @@ class SceneTwo extends Phaser.Scene {
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
-        // Game Audio
-        music = this.sound.add("write-sins-not-tragedies-8-bit");
+        // Play game audio
+        // Note: the .mp3 files converted from YouTube play
+        // way louder so I restrict the volume to .4
+        music = this.sound.add(songs[1].id, { volume: 0.4 });
 
         // todo: add audio controls
         // In chrome, autoplay is blocked and play() will begin after a user gesture
@@ -72,10 +74,20 @@ class SceneTwo extends Phaser.Scene {
             right: 'D'
         });
 
+        // INPUT EVENTS
+        // View the menu of "game items"
+        this.input.keyboard.once(
+            "keydown-M",
+            function() {
+                this.scene.start("gameMenu");
+            },
+            this
+        );
+
         // next level
         this.input.keyboard.once(
             "keydown-N",
-            function () {
+            function() {
                 this.scene.restart({ level: 1 + this.sys.settings.data.level, isBugBurned: false, starsCollected: 0 });
             },
             this
@@ -84,7 +96,7 @@ class SceneTwo extends Phaser.Scene {
         // restart level
         this.input.keyboard.once(
             "keydown-R",
-            function () {
+            function() {
                 this.scene.restart({ 
                     level: this.sys.settings.data.level,
                     isBugBurned: false,
@@ -103,11 +115,11 @@ class SceneTwo extends Phaser.Scene {
             this
         ); 
 
-        // quit game
+        // quit / reboot
         this.input.keyboard.once(
             "keydown-Q",
             function() {
-                this.scene.play("bootGame");
+                this.scene.start("bootGame");
             },
             this
         )
@@ -115,7 +127,7 @@ class SceneTwo extends Phaser.Scene {
         const LADYBUG_SPRITE_FRAMERATE = 5;
         const MONSTER_SPRITE_FRAMERATE = 5;
 
-        // Create game objects and add them to the
+        // todo: update backgrounds/platforms/stars for each new level
         if (this.sys.settings.data.level == 1) {
             this.add.image(400, 300, "lightSky");
         } else if (this.sys.settings.data.level == 2) {
@@ -135,20 +147,20 @@ class SceneTwo extends Phaser.Scene {
         
         // jumpable platforms
         // bottom center left platform
-        platforms.create(50, 350, "grassPlatform").setScale(.125, .1).refreshBody();
-        platforms.create(400, 450, "grassPlatform").setScale(.125, .1).refreshBody();
+        platforms.create(50, 370, "grassPlatform").setScale(.125, .1).refreshBody();
+        platforms.create(425, 450, "grassPlatform").setScale(.125, .1).refreshBody();
         platforms.create(950, 450, "grassPlatform").setScale(.1, .06).refreshBody();
 
         // square
         platforms.create(900, 220, "grassCube").setScale(.1, .09).refreshBody();
-        platforms.create(600, 510, "grassCube").setScale(.1, .09).refreshBody();
-        platforms.create(240, 390, "grassCube").setScale(.1, .09).refreshBody();
+        platforms.create(620, 510, "grassCube").setScale(.1, .09).refreshBody();
+        platforms.create(240, 400, "grassCube").setScale(.1, .09).refreshBody();
         platforms.create(275, 280, "grassCube").setScale(.1, .09).refreshBody();
-        platforms.create(650, 380, "grassCube").setScale(.1, .09).refreshBody();
-        platforms.create(770, 340, "grassCube").setScale(.1, .09).refreshBody();
+        platforms.create(640, 385, "grassCube").setScale(.1, .09).refreshBody();
+        platforms.create(760, 330, "grassCube").setScale(.1, .09).refreshBody();
         
         // top center right
-        platforms.create(550, 250, "grassPlatform").setScale(.2, .1).refreshBody();
+        platforms.create(520, 250, "grassPlatform").setScale(.2, .1).refreshBody();
         platforms.create(900, 250, "grassPlatform").setScale(.2, .1).refreshBody();
         platforms.create(1100, 135, "grassPlatform").setScale(.2, .1).refreshBody();
         platforms.create(0, 200, "grassPlatform").setScale(.2, .1).refreshBody();
@@ -157,24 +169,27 @@ class SceneTwo extends Phaser.Scene {
         let flamePlatform = this.physics.add.staticGroup();
         flamePlatform.create(200, 563, "flame").setScale(.065).refreshBody();
         flamePlatform.create(780, 563, "flame").setScale(.065).refreshBody();
-        flamePlatform.create(585, 216, "flame").setScale(.065).refreshBody();
+        flamePlatform.create(525, 216, "flame").setScale(.065).refreshBody();
 
         // game related text
         const cssGameText = {
-            font: "17px Arial, sans-serif",
+            font: "18px Arial, sans-serif",
             color: "#000"
         };
 
         // Game info text
-        currentLevel = this.add.text(4, 4, `Level ${level}: ${levels[this.sys.settings.data.level-1]}`, cssGameText);
-        starCount = this.add.text(900, 25, `Stars: 0`, cssGameText);
+        currentLevel = this.add.text(6, 6, `Level ${level}: ${levels[this.sys.settings.data.level-1]}`, cssGameText);
+        starCount = this.add.text(990, 6, `Stars: 0`, cssGameText);
         winText = this.add.text(300, 50, "", { color: "#000", fontSize: "20px"});
-        burnedText = this.add.text(400, 100, "", { color: "red" });
+        burnedText = this.add.text(450, 100, "", { color: "red" });
         // timeElapsed = this.add.text(0, 25, this.time.now * 0.01, cssGameText);
-        this.add.text(785, 50, "[R] Restart - [N] Next", cssGameText).setOrigin(0.5);
+        this.add.text(6, 40, "[M] - Menu", {
+            font: "16px Arial, sans-serif",
+            color: "#000"
+        });
 
         // Bug Smasher Game Object
-        monster = this.physics.add.sprite(0, 200, "monster");
+        monster = this.physics.add.sprite(900, 500, "monster");
 
         monster.body.setGravityY(400);
         monster.setBounce(0.15);
@@ -205,7 +220,7 @@ class SceneTwo extends Phaser.Scene {
         // Player "Bug" Game Object
         player = this.physics.add.sprite(0, 400, "bug");
 
-        player.body.setGravityY(400);
+        player.body.setGravityY(425);
         player.setBounce(0.15);
         player.setScale(1.3);
         player.setCollideWorldBounds(true);
