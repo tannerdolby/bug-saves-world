@@ -7,7 +7,8 @@ let config = {
     pixelArt: false,
     scene: [
         SceneOne,
-        SceneTwo
+        SceneTwo,
+        MenuScene
     ],
     loader: {
         baseUrl: "https://labs.phaser.io",
@@ -25,10 +26,35 @@ let config = {
     }
 }
 
+const songs = [
+    {
+        id: "i-write-sins-not-tragedies",
+        url: "https://www.youtube.com/watch?v=cfXkx_GK8eo",
+        title: "I Write Sins Not Tragedies (8 Bit Version)",
+        src: [
+            "assets/I-Write-Sins-Not-Tragedies-8-bit.mp3"
+        ]
+    },
+    {
+        id: "your-love-is-my-drug",
+        url: "https://www.youtube.com/watch?v=nWKPYs54INA",
+        title: "Boom Nation - your love is my drug (8bit slowed)",
+        src: [
+            "assets/Boom-Nation-your-love-is-my-drug.mp3"
+        ]
+    }
+];
+
+function findSong(value, key) {
+    return songs.find(song => song[key] == value);
+}
+
 const levels = [
     "Bugzor Marsh",
     "Starry Night"
 ];
+
+// preset star coordinates for each level
 
 let level;
 
